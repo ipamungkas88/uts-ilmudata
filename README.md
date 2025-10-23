@@ -64,7 +64,7 @@ pip install flask plotly pandas numpy seaborn matplotlib
 cd "c:/Users/pamii/Documents/ilmu data/flask"
 
 # Jalankan aplikasi Flask
-python app_two_pages.py
+python app.py
 ```
 
 Akses dashboard di browser: `http://127.0.0.1:5001`
@@ -178,7 +178,7 @@ Untuk setiap atribut kategorikal:
    if path not in sys.path:
        sys.path.append(path)
 
-   from app_two_pages import app as application
+   from app import app as application
    ```
 
 5. **Upload Dataset**
@@ -233,13 +233,7 @@ Untuk setiap atribut kategorikal:
 - **Durasi**: ~10 menit
 - **Dataset**: Computer Prices Analysis (100,000+ records)
 
-## 📞 Support
 
-Jika ada pertanyaan atau issue, silakan buat issue di repository atau hubungi melalui email.
-
-## 📄 License
-
-Project ini dibuat untuk keperluan akademik.
 
 ---
 
