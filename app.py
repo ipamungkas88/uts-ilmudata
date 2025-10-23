@@ -50,7 +50,7 @@ def _no_data_fig(title, xaxis_title='', yaxis_title='', height=400):
 # Load and preprocess data
 def load_and_preprocess_data():
     try:
-        data = pd.read_csv(r'C:\Users\pamii\Documents\ilmu data\computer_prices_all.csv')
+        data = pd.read_csv('computer_prices_all.csv')
         
         # Remove specified columns if they exist
         columns_to_drop = ['battery_wh', 'charger_watts', 'psu_watts']
