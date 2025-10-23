@@ -20,8 +20,7 @@ Dashboard visualisasi data untuk menganalisis **Harga Komputer dan Spesifikasiny
 ilmu data/
 │
 ├── flask/
-│   ├── app_two_pages.py           # Aplikasi Flask utama (AKTIF)
-│   ├── app_simple.py              # Backup aplikasi (DEPRECATED)
+│   ├── app.py                     # Aplikasi Flask utama
 │   ├── requirements.txt           # Dependencies Python
 │   ├── README.md                  # Dokumentasi proyek
 │   │
@@ -30,7 +29,6 @@ ilmu data/
 │       └── charts.html            # Halaman 2: Visualisasi Charts
 │
 ├── uts.ipynb                      # Jupyter Notebook analisis data
-├── index.ipynb                    # Notebook eksplorasi awal
 └── computer_prices_all.csv        # Dataset (100,000+ records)
 ```
 
