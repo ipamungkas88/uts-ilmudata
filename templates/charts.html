@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Computer Data - Visualizations</title>
+
+  <!-- Bootstrap CSS -->
+  <link
+   href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+   rel="stylesheet"
+  />
+
+  <!-- Plotly.js -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <!-- Font Awesome -->
+  <link
+   rel="stylesheet"
+   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  />
+
+  <!-- Custom CSS -->
+  <style>
+   body {
+    background-color: #f8f9fa;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+   }
+
+   .navbar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   }
+
+   .chart-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+    padding: 30px 20px;
+    transition: all 0.3s ease;
+    min-height: 600px; /* Taller for better chart visibility */
+    position: relative;
+    overflow: visible;
+    display: block;
+    width: 100%;
+    border: 1px solid #e9ecef;
+   }
+
+   .chart-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+   }
+
+   /* Force grid system to behave properly */
+   .row {
+    margin-left: -15px;
+    margin-right: -15px;
+    margin-bottom: 30px;
+   }
+
+   .col-lg-6,
+   .col-lg-4,
+   .col-lg-8,
+   .col-lg-12 {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-bottom: 30px;
+   }
+
+   .section-title {
+    color: #2c3e50;
+    border-bottom: 4px solid #667eea;
+    padding-bottom: 15px;
+    margin-bottom: 40px;
+    font-weight: 700;
+    font-size: 1.75rem;
+    letter-spacing: -0.5px;
+   }
+
+   .dashboard-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 50px 0;
+    margin-bottom: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+   }
+
+   .dashboard-header h1 {
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   }
+
+   .dashboard-header .lead {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    font-weight: 400;
+   }
+
+   .loading {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+   }
+
+   .loading .spinner-border {
+    margin-bottom: 15px;
+   }
+
+   .loading-text {
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 10px;
+   }
+
+   /* Chart container improvements - FIXED CLIPPING */
+   .chart-container > div[id] {
+    width: 100% !important;
+    min-height: 500px; /* Larger for better visibility */
+    padding: 15px;
+   }
+
+   .chart-container .js-plotly-plot {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 500px !important;
+   }
+
+   /* Remove conflicting CSS that causes layout issues */
+   .chart-container .plotly-graph-div {
+    width: 100% !important;
+    overflow: visible !important;
+   }
+
+   /* Ensure plotly chart uses full space */
+   .chart-container .plot-container {
+    width: 100% !important;
+    height: 100% !important;
+   }
+
+   .chart-title {
+    color: #2c3e50;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    padding-left: 15px;
+    border-left: 5px solid #667eea;
+    line-height: 1.4;
+   }
+  </style>
+ </head>
+ <body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-dark navbar-expand-lg">
+   <div class="container">
+    <a class="navbar-brand" href="/">
+     <i class="fas fa-chart-bar me-2"></i>
+     Computer Data Analysis
+    </a>
+    <button
+     class="navbar-toggler"
+     type="button"
+     data-bs-toggle="collapse"
+     data-bs-target="#navbarNav"
+    >
+     <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+     <ul class="navbar-nav ms-auto">
+      <li class="nav-item">
+       <a class="nav-link" href="/statistics">
+        <i class="fas fa-table me-1"></i>
+        Statistics
+       </a>
+      </li>
+      <li class="nav-item">
+       <a class="nav-link active" href="/charts">
+        <i class="fas fa-chart-line me-1"></i>
+        Charts
+       </a>
+      </li>
+     </ul>
+    </div>
+   </div>
+  </nav>
+
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+   <div class="container text-center">
+    <h1 class="display-4 mb-3">
+     <i class="fas fa-chart-line me-3"></i>
+     Data Visualizations
+    </h1>
+   </div>
+  </div>
+
+  <div class="container">
+   <!-- Main Visualizations -->
+   <div class="row">
+    <div class="col-12">
+     <h2 class="section-title">📈 Price and Performance Analysis</h2>
+    </div>
+
+    <!-- Scatter Plot -->
+    <div class="col-lg-6">
+     <div class="chart-container">
+      <h5 class="chart-title">1. Price vs Performance Score</h5>
+      <div id="scatter-plot" class="loading">
+       <div class="spinner-border" role="status"></div>
+       <p>Loading scatter plot...</p>
+      </div>
+     </div>
+    </div>
+
+    <!-- Bar Chart - Top Brands -->
+    <div class="col-lg-6">
+     <div class="chart-container">
+      <h5 class="chart-title">2. Top 10 Brands by Average Price</h5>
+      <div id="bar-chart" class="loading">
+       <div class="spinner-border" role="status"></div>
+       <p>Loading bar chart...</p>
+      </div>
+     </div>
+    </div>
+
+    <!-- Box Plot -->
+    <div class="col-lg-6">
+     <div class="chart-container">
+      <h5 class="chart-title">3. Price Distribution by Operating System</h5>
+      <div id="box-plot" class="loading">
+       <div class="spinner-border" role="status"></div>
+       <p>Loading box plot...</p>
+      </div>
+     </div>
+    </div>
+
+    <!-- Histogram -->
+    <div class="col-lg-6">
+     <div class="chart-container">
+      <h5 class="chart-title">4. Price Distribution Histogram</h5>
+      <div id="histogram" class="loading">
+       <div class="spinner-border" role="status"></div>
+       <p>Loading histogram...</p>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Secondary Visualizations -->
+   <div class="row">
+    <div class="col-12">
+     <h2 class="section-title">🔍 Detailed Analysis</h2>
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="col-lg-4">
+     <div class="chart-container">
+      <h5 class="chart-title">5. Device Type Distribution</h5>
+      <div id="pie-chart" class="loading">
+       <div class="spinner-border" role="status"></div>
+       <p>Loading pie chart...</p>
+      </div>
+     </div>
+    </div>
+
+    <!-- Correlation Heatmap -->
+    <div class="col-lg-8">
+     <div class="chart-container">
+      <h5 class="chart-title">6. Correlation Matrix</h5>
+      <div id="heatmap" class="loading">
+       <div class="spinner-border" role="status"></div>
+       <p>Loading heatmap...</p>
+      </div>
+     </div>
+    </div>
+
+    <!-- CPU Brand Bar Chart -->
+    <div class="col-lg-6">
+     <div class="chart-container">
+      <h5 class="chart-title">7. Average Price by CPU Brand</h5>
+      <div id="cpu-bar-chart" class="loading">
+       <div class="spinner-border" role="status"></div>
+       <p>Loading CPU analysis...</p>
+      </div>
+     </div>
+    </div>
+
+    <!-- Price Trend Line Chart -->
+    <div class="col-lg-6">
+     <div class="chart-container">
+      <h5 class="chart-title">8. Price Trend by Release Year</h5>
+      <div id="line-chart" class="loading">
+       <div class="spinner-border" role="status"></div>
+       <p>Loading trend analysis...</p>
+      </div>
+     </div>
+    </div>
+
+    <!-- GPU Stacked Bar -->
+    <div class="col-lg-12">
+     <div class="chart-container">
+      <h5 class="chart-title">9. GPU Brand Composition by Device Type</h5>
+      <div id="stacked-bar" class="loading">
+       <div class="spinner-border" role="status"></div>
+       <p>Loading GPU analysis...</p>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-light text-center py-4 mt-5">
+   <div class="container">
+    <p>&copy; 2025 Computer Data Analysis. Data Science Project.</p>
+   </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom JavaScript -->
+  <script>
+   // Global variables to store chart data
+   let chartsData = {};
+   let chartsLoaded = {};
+
+   // Chart configuration for consistent styling
+   const chartConfig = {
+    responsive: true,
+    displayModeBar: false,
+    staticPlot: false,
+    toImageButtonOptions: {
+     format: "png",
+     filename: "chart",
+     height: 400,
+     width: 800,
+     scale: 1,
+    },
+   };
+
+   // Load chart data with error handling
+   async function loadChart(endpoint, containerId) {
+    try {
+     console.log(`Loading chart: ${endpoint} -> ${containerId}`);
+     const response = await fetch(endpoint);
+
+     if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+     }
+
+     const graphJSON = await response.json();
+     console.log(`Chart data loaded for ${containerId}`);
+
+     // Clear the container
+     const container = document.getElementById(containerId);
+     container.innerHTML = "";
+
+     // Ensure layout has proper sizing
+     if (graphJSON.layout) {
+      graphJSON.layout.autosize = true;
+      graphJSON.layout.width = undefined;
+
+      const rect = container.getBoundingClientRect();
+      const baseHeight = 400;
+      graphJSON.layout.height = Math.max(
+       baseHeight,
+       Math.floor(rect.height || baseHeight)
+      );
+      graphJSON.layout.margin = Object.assign(
+       { l: 60, r: 40, t: 60, b: 60 },
+       graphJSON.layout.margin || {}
+      );
+     }
+
+     // Create or update chart
+     if (chartsLoaded[containerId]) {
+      await Plotly.react(
+       containerId,
+       graphJSON.data,
+       graphJSON.layout,
+       chartConfig
+      );
+     } else {
+      await Plotly.newPlot(
+       containerId,
+       graphJSON.data,
+       graphJSON.layout,
+       chartConfig
+      );
+     }
+
+     // Force resize to match container
+     const el = document.getElementById(containerId);
+     const rect2 = el.getBoundingClientRect();
+     const h = Math.max(400, Math.floor(rect2.height || 400));
+     await Plotly.relayout(el, {
+      autosize: true,
+      width: Math.floor(el.clientWidth || rect2.width),
+      height: h,
+     });
+
+     // Mark as loaded
+     chartsLoaded[containerId] = true;
+    } catch (error) {
+     console.error(`Error loading chart ${containerId}:`, error);
+     document.getElementById(containerId).innerHTML = `
+      <div class="alert alert-danger">
+       <i class="fas fa-exclamation-triangle"></i>
+       Error loading chart: ${error.message}
+       <br><small>Endpoint: ${endpoint}</small>
+      </div>`;
+    }
+   }
+
+   // Load dashboard data
+   async function loadCharts() {
+    try {
+     // Load all charts from single API endpoint
+     const chartsResponse = await fetch("/api/charts");
+
+     if (!chartsResponse.ok) {
+      throw new Error(
+       `HTTP ${chartsResponse.status}: ${chartsResponse.statusText}`
+      );
+     }
+
+     chartsData = await chartsResponse.json();
+     console.log("Charts data loaded:", Object.keys(chartsData));
+     renderCharts();
+    } catch (error) {
+     console.error("Error loading charts:", error);
+     showError("Failed to load chart data. Please refresh the page.");
+    }
+   }
+
+   // Render all charts
+   function renderCharts() {
+    const chartMappings = {
+     scatter_price_performance: "scatter-plot",
+     bar_top_brands: "bar-chart",
+     box_price_os: "box-plot",
+     hist_price: "histogram",
+     pie_device_type: "pie-chart",
+     heatmap_correlation: "heatmap",
+     bar_cpu_brand: "cpu-bar-chart",
+     line_price_trend: "line-chart",
+     stacked_gpu_device: "stacked-bar",
+    };
+
+    Object.entries(chartMappings).forEach(([dataKey, containerId]) => {
+     if (chartsData[dataKey]) {
+      try {
+       const graphJSON = JSON.parse(chartsData[dataKey]);
+       renderSingleChart(graphJSON, containerId);
+      } catch (e) {
+       console.error(`Error parsing chart ${dataKey}:`, e);
+       showChartError(containerId, `Error parsing chart data`);
+      }
+     } else {
+      showChartError(containerId, `Chart data not available`);
+     }
+    });
+   }
+
+   // Render individual chart - PROFESSIONAL STYLING
+   async function renderSingleChart(graphJSON, containerId) {
+    try {
+     const container = document.getElementById(containerId);
+     container.innerHTML = "";
+
+     // Apply professional layout settings
+     if (graphJSON.layout) {
+      graphJSON.layout.autosize = true;
+      graphJSON.layout.template = "plotly_white";
+      graphJSON.layout.font = graphJSON.layout.font || {
+       size: 12,
+       family: "Arial, sans-serif",
+      };
+      // Generous margins for professional look
+      graphJSON.layout.margin = Object.assign(
+       { l: 90, r: 60, t: 120, b: 90 },
+       graphJSON.layout.margin || {}
+      );
+      graphJSON.layout.height = 500; // Larger height for better visibility
+      graphJSON.layout.width = undefined;
+      // Professional styling
+      if (!graphJSON.layout.plot_bgcolor) {
+       graphJSON.layout.plot_bgcolor = "rgba(248, 249, 250, 0.5)";
+      }
+      if (!graphJSON.layout.paper_bgcolor) {
+       graphJSON.layout.paper_bgcolor = "white";
+      }
+     }
+
+     // Create chart with professional config
+     await Plotly.newPlot(containerId, graphJSON.data, graphJSON.layout, {
+      responsive: true,
+      displayModeBar: true,
+      displaylogo: false,
+      modeBarButtonsToRemove: ["pan2d", "lasso2d", "select2d"],
+     });
+
+     chartsLoaded[containerId] = true;
+    } catch (error) {
+     console.error(`Error rendering chart ${containerId}:`, error);
+     showChartError(containerId, error.message);
+    }
+   }
+
+   // Show chart-specific error
+   function showChartError(containerId, message) {
+    document.getElementById(containerId).innerHTML = `
+     <div class="alert alert-warning text-center">
+      <i class="fas fa-exclamation-triangle"></i>
+      <br>Unable to load chart
+      <br><small>${message}</small>
+     </div>`;
+   }
+
+   // Show global error message
+   function showError(message) {
+    const alertDiv = document.createElement("div");
+    alertDiv.className = "alert alert-danger alert-dismissible fade show";
+    alertDiv.innerHTML = `
+     ${message}
+     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document
+     .querySelector(".container")
+     .insertBefore(alertDiv, document.querySelector(".container").firstChild);
+   }
+
+   // Initialize dashboard when page loads
+   document.addEventListener("DOMContentLoaded", function () {
+    console.log("Initializing charts dashboard...");
+    loadCharts();
+   });
+
+   // Make charts responsive on window resize - FIXED
+   window.addEventListener("resize", function () {
+    // Debounce resize to prevent excessive calls
+    clearTimeout(window.resizeTimeout);
+    window.resizeTimeout = setTimeout(() => {
+     Object.keys(chartsLoaded).forEach((containerId) => {
+      if (chartsLoaded[containerId]) {
+       try {
+        const element = document.getElementById(containerId);
+        if (element && element.layout) {
+         Plotly.Plots.resize(containerId);
+        }
+       } catch (e) {
+        // Ignore resize errors to prevent layout corruption
+        console.log(`Resize skipped for ${containerId}`);
+       }
+      }
+     });
+    }, 250); // Wait 250ms after resize stops
+   });
+  </script>
+ </body>
+</html>
